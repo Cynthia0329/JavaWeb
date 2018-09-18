@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.WebSinger">
+
+	<resultMap type="com.wlql.domain.WebSinger" id="WebSinger">
+	    <id column="SINGER_ID" property="singer_id"  jdbcType="VARCHAR"/>
+	    <result column="SINGER_NAME" property="singer_name" jdbcType="VARCHAR"/>
+	    <result column="SINGER_BIRTHDATE" property="singer_birthdate" jdbcType="DATE"/>
+	    <result column="SINGER_SHUXIANG" property="singer_shuxiang" jdbcType="VARCHAR"/>
+	    <result column="SINGER_XINGZUO" property="singer_xingzuo" jdbcType="VARCHAR"/>
+	    <result column="SINGER_AIHAO" property="singer_aihao" jdbcType="VARCHAR"/>
+	    <result column="SINGER_JIANJIE" property="singer_jianjie" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<select id="selectForPage" resultMap="WebSinger"  parameterType="com.wlql.domain.Page">
+		SELECT * FROM  WebSinger
+		<where>
+			 <if test="params.singer_name!=null and params.singer_name!='' ">
+			 SINGER_NAME LIKE CONCAT(CONCAT('%', #{params.singer_name}),'%') 
+		    </if>
+		     <if test="params.singer_shuxiang!=null and params.singer_shuxiang!='' ">
+			  AND SINGER_SHUXIANG LIKE CONCAT(CONCAT('%', #{params.singer_shuxiang}),'%') 
+		    </if>
+		    <if test="params.singer_xingzuo!=null and params.singer_xingzuo!='' ">
+			  AND SINGER_XINGZUO LIKE CONCAT(CONCAT('%', #{params.singer_xingzuo}),'%') 
+		    </if>
+		     <if test="params.singer_aihao!=null and params.singer_aihao!='' ">
+			   AND SINGER_AIHAO LIKE CONCAT(CONCAT('%', #{params.singer_aihao}),'%') 
+		    </if>
+		     <if test="params.singer_jianjie!=null and params.singer_jianjie!='' ">
+			   AND SINGER_JIANJIE LIKE CONCAT(CONCAT('%', #{params.singer_jianjie}),'%') 
+		    </if>
+		  
+		</where>
+	</select>
+	
+	
+	<insert id="create"  parameterType="com.wlql.domain.WebSinger">
+	      insert into WebSinger(SINGER_ID,SINGER_NAME,SINGER_BIRTHDATE,SINGER_SHUXIANG,SINGER_XINGZUO,SINGER_AIHAO,SINGER_JIANJIE)
+	      values(#{singer_id,jdbcType=VARCHAR},#{singer_name,jdbcType=VARCHAR},#{singer_birthdate,jdbcType=DATE},#{singer_shuxiang,jdbcType=VARCHAR},
+	      #{singer_xingzuo,jdbcType=VARCHAR},#{singer_aihao,jdbcType=DATE},#{singer_jianjie,jdbcType=VARCHAR})
+	      
+	</insert>
+	
+	<update id="update"  parameterType="com.wlql.domain.WebSinger" >
+	      update WebSinger 
+	      <set>
+	            <if test="singer_name!=null and singer_name!=''">
+	                 SINGER_NAME=#{singer_name,jdbcType=VARCHAR},
+	            </if>
+	             <if test="singer_birthdate!=null and singer_birthdate!=''">
+	                 SINGER_BIRTHDATE=#{singer_birthdate,jdbcType=DATE},
+	            </if>
+	             <if test="singer_shuxiang!=null and singer_shuxiang!=''">
+	                 SINGER_SHUXIANG=#{singer_shuxiang,jdbcType=VARCHAR},
+	            </if>
+	             <if test="singer_xingzuo!=null and singer_xingzuo!=''">
+	                 SINGER_XINGZUO=#{singer_xingzuo,jdbcType=VARCHAR},
+	            </if>
+	             <if test="singer_aihao!=null and singer_aihao!=''">
+	                 SINGER_AIHAO=#{singer_aihao,jdbcType=VARCHAR},
+	            </if>
+	             <if test="singer_jianjie!=null and singer_jianjie!=''">
+	                 SINGER_JIANJIE=#{singer_jianjie,jdbcType=VARCHAR},
+	            </if>
+	      </set>
+	      where singer_id=#{singer_id,jdbcType=VARCHAR}
+	</update>
+	
+	
+	
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from WebSinger where SINGER_ID=#{SINGER_ID,jdbcType=VARCHAR}
+	
+	</delete>
+	
+	<select id="selectByPk" parameterType="java.lang.String" resultMap="WebSinger">
+	    select * from WebSinger where SINGER_ID=#{SINGER_ID,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="queryAllSinger" resultMap="WebSinger">
+	   select * from WebSinger
+	</select>
+	
+</mapper>
+

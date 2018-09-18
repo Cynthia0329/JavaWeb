@@ -1,0 +1,8 @@
+用户登录地址 ：
+
+http://localhost:8080/MusicWeb/userlogin.jsp
+
+
+管理员登录地址：
+
+http://localhost:8080/MusicWeb/admin.jsp

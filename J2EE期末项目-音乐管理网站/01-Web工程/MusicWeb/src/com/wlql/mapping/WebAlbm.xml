@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.WebAlbm">
+
+	<resultMap type="com.wlql.domain.WebAlbm" id="WebAlbm">
+	    <id column="ALBM_ID" property="albm_id"  jdbcType="VARCHAR"/>
+	    <result column="ALBM_NAME" property="albm_name" jdbcType="VARCHAR"/>
+	    <result column="SINGER_ID" property="singer_id" jdbcType="VARCHAR"/>
+	    <result column="SINGER_NAME" property="singer_name" jdbcType="VARCHAR"/>
+	    <result column="ALBM_DATE" property="albm_date" jdbcType="DATE"/>
+	    <result column="ALBM_JIANJIE" property="albm_jianjie" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create"  parameterType="com.wlql.domain.WebAlbm">
+	      insert into webAlbm(ALBM_ID,ALBM_NAME,SINGER_ID,ALBM_DATE,ALBM_JIANJIE)
+	      values(#{albm_id,jdbcType=VARCHAR},#{albm_name,jdbcType=VARCHAR},#{singer_id,jdbcType=VARCHAR},#{albm_date,jdbcType=DATE},
+	      #{albm_jianjie,jdbcType=VARCHAR})
+	      
+	</insert>
+	
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<select id="selectForPage" resultMap="WebAlbm"  parameterType="com.wlql.domain.Page">
+		select * from (select a.*,b.singer_name FROM  WebAlbm a left join WebSinger b on a.singer_id=b.singer_id) c
+		<where>
+			 <if test="params.albm_name!=null and params.albm_name!='' ">
+			 c.ALBM_NAME LIKE CONCAT(CONCAT('%', #{params.albm_name}),'%') 
+		    </if>
+		     <if test="params.singer_name!=null and params.singer_name!='' ">
+			  AND c.SINGER_NAME LIKE CONCAT(CONCAT('%', #{params.singer_name}),'%') 
+		    </if>
+		    <if test="params.albm_jianjie!=null and params.albm_jianjie!='' ">
+			  AND c.ALBM_JIANJIE LIKE CONCAT(CONCAT('%', #{params.albm_jianjie}),'%') 
+		    </if>
+		    <if test="params.singer_id!=null and params.singer_id!='' ">
+			  AND c.SINGER_ID LIKE CONCAT(CONCAT('%', #{params.singer_id}),'%') 
+		    </if>
+		     
+		  
+		</where>
+	</select>
+	
+	
+	<update id="update"  parameterType="com.wlql.domain.WebAlbm" >
+	      update webAlbm 
+	      <set>
+	            <if test="albm_name!=null and albm_name!=''">
+	                 ALBM_NAME=#{albm_name,jdbcType=VARCHAR},
+	            </if>
+	             <if test="singer_id!=null and singer_id!=''">
+	                 SINGER_ID=#{singer_id,jdbcType=VARCHAR},
+	            </if>
+	             <if test="albm_date!=null and albm_date!=''">
+	                 ALBM_DATE=#{albm_date,jdbcType=DATE},
+	            </if>
+	             <if test="albm_jianjie!=null and albm_jianjie!=''">
+	                 ALBM_JIANJIE=#{albm_jianjie,jdbcType=VARCHAR},
+	            </if>
+	           
+	      </set>
+	      where ALBM_ID=#{albm_id,jdbcType=VARCHAR}
+	</update>
+	
+	
+	
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from webAlbm  where ALBM_ID=#{albm_id,jdbcType=VARCHAR}
+	
+	</delete>
+	
+	<select id="selectByPk" parameterType="java.lang.String" resultMap="WebAlbm">
+	    select * from webAlbm  where ALBM_ID=#{albm_id,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<select id="getAllWebAlbm" resultMap="WebAlbm">
+	   select * from webAlbm
+	</select>
+	
+</mapper>
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.WebMusic">
+	 <!-- 返回值为List，resultType为List中元素的全类名 -->
+	 <!-- 自定义返回结果集 -->
+	 <!-- 在各种标签中的id属性必须和接口中的方法名相同 ， id属性值必须是唯一的，不能够重复使用。parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型--> 
+	<!-- 表字段与属性的映射 -->
+	<resultMap type="com.wlql.domain.WebMusic" id="WebMusic">
+	    <id column="MUSIC_ID" property="music_id"  jdbcType="VARCHAR"/>
+	    <result column="MUSIC_NAME" property="music_name" jdbcType="VARCHAR"/>
+	    <result column="MUSIC_ALBM_ID" property="music_albm_id" jdbcType="VARCHAR"/>
+	    <result column="MUSIC_ALBM_NAME" property="music_albm_name" jdbcType="VARCHAR"/>
+	    <result column="MUSIC_SHICHANG" property="music_shichang" jdbcType="INTEGER"/>
+	    <result column="MUSIC_FILEPATH" property="music_filepath" jdbcType="VARCHAR"/>
+	    <result column="MUSIC_GECI" property="music_geci" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<!-- 查询音乐--> 
+	<select id="selectForPage" resultMap="WebMusic"  parameterType="com.wlql.domain.Page">
+		select a.*,b.albm_name as music_albm_name FROM  WebMusic a left join WebAlbm b on a.music_albm_id=b.albm_id
+		<where>
+			 <if test="params.music_albm_name!=null and params.music_albm_name!='' ">
+			 MUSIC_ALBM_NAME LIKE CONCAT(CONCAT('%', #{params.music_albm_name}),'%') 
+		    </if>
+		     <if test="params.music_name!=null and params.music_name!='' ">
+			  MUSIC_NAME LIKE CONCAT(CONCAT('%', #{params.music_name}),'%') 
+		    </if>
+		    <if test="params.music_albm_id!=null and params.music_albm_id!='' ">
+			  MUSIC_ALBM_ID LIKE CONCAT(CONCAT('%', #{params.music_albm_id}),'%') 
+		    </if>
+		   
+		  
+		</where>
+	</select>
+	<!-- 添加音乐 --> 
+	<insert id="create"  parameterType="com.wlql.domain.WebMusic">
+	      insert into webmusic(MUSIC_ID,MUSIC_ALBM_ID,MUSIC_SHICHANG,MUSIC_FILEPATH,MUSIC_GECI,MUSIC_NAME)
+	      values(#{music_id,jdbcType=VARCHAR},#{music_albm_id,jdbcType=VARCHAR},#{music_shichang,jdbcType=INTEGER},#{music_filepath,jdbcType=VARCHAR},
+	      #{music_geci,jdbcType=VARCHAR},#{music_name,jdbcType=VARCHAR})
+	      
+	</insert>
+	<!-- 修改音乐 --> 
+	<update id="update"  parameterType="com.wlql.domain.WebMusic" >
+	      update webmusic
+	      <set>
+	            <if test="music_albm_id!=null and music_albm_id!=''">
+	                 MUSIC_ALBM_ID=#{music_albm_id,jdbcType=VARCHAR},
+	            </if>
+	             <if test="music_shichang!=null and music_shichang!=''">
+	                 MUSIC_SHICHANG=#{music_shichang,jdbcType=INTEGER},
+	            </if>
+	             <if test="music_filepath!=null and music_filepath!=''">
+	                 MUSIC_FILEPATH=#{music_filepath,jdbcType=DATE},
+	            </if>
+	             <if test="music_geci!=null and music_geci!=''">
+	                 MUSIC_GECI=#{music_geci,jdbcType=VARCHAR},
+	            </if>
+	             <if test="music_name!=null and music_name!=''">
+	                 MUSIC_NAME=#{music_name,jdbcType=VARCHAR},
+	            </if>
+	           
+	      </set>
+	      where MUSIC_ID=#{music_id,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<!-- 删除音乐，根据id --> 
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from webmusic  where MUSIC_ID=#{music_id,jdbcType=VARCHAR}
+	
+	</delete>
+	<!-- 查询全部 -->
+	<select id="selectByPk" parameterType="java.lang.String" resultMap="WebMusic">
+	    select * from webmusic  where MUSIC_ID=#{music_id,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>
+

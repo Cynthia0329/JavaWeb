@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.WebUser">
+
+	<resultMap type="com.wlql.domain.WebUser" id="WebUser">
+	    <id column="USERID" property="userid"  jdbcType="VARCHAR"/>
+	    <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+	    <result column="USERSEX" property="usersex" jdbcType="VARCHAR"/>
+	    <result column="USERCARD" property="usercard" jdbcType="VARCHAR"/>
+	  
+	    <result column="USERADDRESS" property="useraddress" jdbcType="DATE"/>
+	    <result column="USERBIRTHDATE" property="userbirthdate" jdbcType="VARCHAR"/>
+	    <result column="USERZT" property="userzt" jdbcType="VARCHAR"/>
+	 
+	
+	
+	</resultMap>
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<select id="selectForPage" resultMap="WebUser"  parameterType="com.wlql.domain.Page">
+		SELECT * FROM  webuser
+		<where>
+			 <if test="params.username!=null and params.username!='' ">
+			 username LIKE CONCAT(CONCAT('%', #{params.username}),'%') 
+		    </if>
+		     <if test="params.usersex!=null and params.usersex!='' ">
+			  AND usersex LIKE CONCAT(CONCAT('%', #{params.usersex}),'%') 
+		    </if>
+		    <if test="params.usercard!=null and params.usercard!='' ">
+			  AND usercard LIKE CONCAT(CONCAT('%', #{params.usercard}),'%') 
+		    </if>
+		     <if test="params.useraddress!=null and params.useraddress!='' ">
+			   AND useraddress LIKE CONCAT(CONCAT('%', #{params.useraddress}),'%') 
+		    </if>
+		     <if test="params.userzt!=null and params.userzt!='' ">
+			   AND userzt LIKE CONCAT(CONCAT('%', #{params.userzt}),'%') 
+		    </if>
+		  
+		</where>
+	</select>
+	
+	
+	<insert id="create"  parameterType="com.wlql.domain.WebUser">
+	      insert into webuser(USERID,PASSWORD,USERSEX,USERCARD,USERADDRESS,USERBIRTHDATE,USERZT,USERNAME)
+	      values(#{userid,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{usersex,jdbcType=VARCHAR},#{usercard,jdbcType=VARCHAR},
+	      #{useraddress,jdbcType=VARCHAR},#{userbirthdate,jdbcType=DATE},#{userzt,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR})
+	      
+	</insert>
+	
+	
+	<update id="update" parameterType="com.wlql.domain.WebUser">
+	    update webuser
+	    <set>
+	         <if test="password!=null and password!=''">
+	                 PASSWORD=#{password,jdbcType=VARCHAR},
+	            </if>
+	             <if test="usersex!=null and usersex!=''">
+	                 USERSEX=#{usersex,jdbcType=VARCHAR},
+	            </if>
+	             <if test="usercard!=null and usercard!=''">
+	                 USERCARD=#{usercard,jdbcType=VARCHAR},
+	            </if>
+	             <if test="useraddress!=null and useraddress!=''">
+	                 USERADDRESS=#{useraddress,jdbcType=VARCHAR},
+	            </if>
+	             <if test="userbirthdate!=null and userbirthdate!=''">
+	                 USERBIRTHDATE=#{userbirthdate,jdbcType=DATE},
+	            </if>
+	           
+	    
+	    </set>
+	    where userid=#{userid,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from webuser where userid=#{userid,jdbcType=VARCHAR}
+	
+	</delete>
+	
+	<select id="selectByPk" parameterType="java.lang.String" resultMap="WebUser">
+	    select * from webuser where userid=#{userid,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateUserZt" parameterType="java.lang.String" >
+	    update webuser set userzt='1' where userid=#{userid,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectByAccount" parameterType="java.lang.String" resultMap="WebUser">
+	select * from webuser where username=#{username,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>
+

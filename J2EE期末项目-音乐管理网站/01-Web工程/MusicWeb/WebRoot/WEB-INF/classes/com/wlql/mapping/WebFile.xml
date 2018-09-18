@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.WebFile">
+
+	<resultMap type="com.wlql.domain.WebFile" id="WebFile">
+	    <id column="FILEID" property="fileid"  jdbcType="VARCHAR"/>
+	    <result column="FILENAME" property="filename" jdbcType="VARCHAR"/>
+	    <result column="FILEPATH" property="filepath" jdbcType="VARCHAR"/>
+	    <result column="FILESIZE" property="filesize" jdbcType="BIGINT"/>
+	    <result column="FILEUPLOADDATE" property="fileuploaddate" jdbcType="VARCHAR"/>
+	    <result column="FILE_PK_ID" property="file_pk_id" jdbcType="VARCHAR"/>
+	    <result column="FILE_PK_LX" property="file_pk_lx" jdbcType="VARCHAR"/>
+	
+	</resultMap>
+	
+	<insert id="create"  parameterType="com.wlql.domain.WebFile">
+	        insert into webfile(fileid,filename,filepath,filesize,fileuploaddate,file_pk_id,file_pk_lx)
+	        values (#{fileid,jdbcType=VARCHAR},#{filename,jdbcType=VARCHAR},#{filepath,jdbcType=VARCHAR},
+	        #{filesize,jdbcType=BIGINT},#{fileuploaddate,jdbcType=DATE},#{file_pk_id,jdbcType=VARCHAR},
+	        #{file_pk_lx,jdbcType=VARCHAR}
+	       
+	        )
+	
+	</insert>
+	
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<select id="selectForPage" resultMap="WebFile"  parameterType="com.wlql.domain.Page">
+		SELECT * FROM  webfile where file_pk_id=#{params.file_pk_id}
+		
+	</select>
+	
+	
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from webfile where fileid=#{file_pk_id}
+	</delete>
+	
+	
+	<select id="getWebFileByPkId" parameterType="java.lang.String" resultMap="WebFile">
+	
+	   select * from webfile where file_pk_id=#{file_pk_id}
+	</select>
+	
+	<select id="getWebFileById" parameterType="java.lang.String" resultMap="WebFile">
+	
+	   select * from webfile where fileid=#{fileid}
+	</select>
+	
+	
+	
+	
+</mapper>
+

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.wlql.domain.Manage">
+
+	<!-- 用于完成查询出的列名和相应实体属性的映射 -->
+	<resultMap type="com.wlql.domain.Manage" id="Manage">
+		<!-- 用于映射主键列 -->
+	    <id column="ID" property="id"  jdbcType="VARCHAR"/>
+	    <!-- 用于映射普通列 -->
+	    <result column="NAME" property="name" jdbcType="VARCHAR"/>
+	    <result column="ACCOUNT" property="account" jdbcType="VARCHAR"/>
+	    <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<insert id="create"  parameterType="com.wlql.domain.Manage">
+	        insert into MANAGE(ID,NAME,ACCOUNT,PASSWORD)
+	        values (#{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{account,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR}
+	       
+	        )
+	
+	</insert>
+	
+	<!-- 返回管理员账户信息 -->
+	<!-- 查询出的列名和实体的属性名不一致，所以应该使用resultMap -->
+	<select id="getManageByAccount" parameterType="java.lang.String" resultMap="Manage">
+	   select * from Manage where account=#{account}
+	
+	</select>
+	
+	<!-- 修改管理员密码 -->
+	<update id="updateMm" parameterType="com.wlql.domain.Manage">
+	   update Manage set password=#{password} where id=#{id}
+	</update>
+	
+</mapper>
+
