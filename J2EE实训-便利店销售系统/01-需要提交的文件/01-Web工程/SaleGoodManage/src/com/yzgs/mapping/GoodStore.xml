@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.yzgs.domain.GoodStore"><!-- 映射接口类的 路径！！！ -->
+ <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，id属性值必须是唯一的，不能够重复
+    使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型
+    resultType="com.edu.hpu.domain.User"就表示将查询结果封装成一个User类的对象返回
+    User类就是users表所对应的实体类
+    -->
+
+<!-- 所有对表的增删改查操作 的sql 语句和 该文件映射的借口类中的方法 在给文件中注册体现 -->
+ <!-- 实体类 中 与表名字 不同  使用 resultMap 来创建 别名映射！-->
+	<resultMap type="com.yzgs.domain.GoodStore" id="GoodStore">
+	    <id column="id" property="id"  jdbcType="VARCHAR"/>
+	    <result column="storePh" property="storePh" jdbcType="VARCHAR"/>
+	    <result column="goodId" property="goodId" jdbcType="VARCHAR"/>
+	    <result column="goodName" property="goodName" jdbcType="VARCHAR"/>
+	    <result column="goodJPrice" property="goodJPrice" jdbcType="DOUBLE"/>
+	    <result column="storeNum" property="storeNum" jdbcType="INTEGER"/>
+	    <result column="goodValidDate" property="goodValidDate" jdbcType="DATE"/>
+	    <result column="goodXs" property="goodXs" jdbcType="DOUBLE"/>
+	    <result column="kcNum" property="kcNum" jdbcType="INTEGER"/>
+	
+	</resultMap>
+	
+
+	
+	<!-- 注意分页查询与查询所有的相同与不同点 -->
+	<select id="selectForPage" resultMap="GoodStore"  parameterType="com.yzgs.domain.Page">
+	     <!-- 库存数量为进货数量-卖出去的数量-减去过期的数量 -->
+		select a.*,b.goodName,(a.storeNum-IFNULL(c.saleNum,0)-IFNULL(d.guoqiNum,0)) as kcNum from goodstore a 
+			left join good b on a.goodId=b.id 
+			left join (select IFNULL(sum(saleNum),0) as saleNum,storePh from salerecord group by storePh) c 
+			on a.storePh=c.storePh
+			left join (select sum(goodNum) as guoqiNum,storePh from goodguoqi group by storeph) d 
+			on a.storePh=d.storePh
+		<!-- 头部查询 -->
+		<where>
+			<!--库存编号查询 -->
+			 <if test="params.storePh!=null and params.storePh!='' ">
+			 a.storePh LIKE CONCAT(CONCAT('%', #{params.storePh}),'%') 
+		    </if>
+		    <!--商品名称查询，通过绑定goodId来查询 -->
+		     <if test="params.goodId!=null and params.goodId!='' ">
+			 and a.goodId =#{params.goodId,jdbcType=VARCHAR}
+		    </if>
+		   
+		</where>
+	</select>
+	
+	<!-- 添加库存商品-->
+	<insert id="create"  parameterType="com.yzgs.domain.GoodStore">
+	      insert into goodstore(id,storePh,goodId,goodJPrice,storeNum,goodValidDate,goodXs,goodSumMoney,storeDate)
+	      values(#{id,jdbcType=VARCHAR},#{storePh,jdbcType=VARCHAR},#{goodId,jdbcType=VARCHAR},#{goodJPrice,jdbcType=DOUBLE},
+	      #{storeNum,jdbcType=INTEGER},#{goodValidDate,jdbcType=DATE},#{goodXs,jdbcType=DOUBLE},#{goodSumMoney,jdbcType=DOUBLE},#{storeDate,jdbcType=DATE})
+	      
+	</insert>
+	<!-- 修改库存信息 -->
+	<update id="update"  parameterType="com.yzgs.domain.GoodStore" >
+	      update goodstore
+	      <set>
+	            <if test="storePh!=null and storePh!=''">
+	                 storePh=#{storePh,jdbcType=VARCHAR},
+	            </if>
+	            <if test="goodJPrice!=null and goodJPrice!=''">
+	                 goodJPrice=#{goodJPrice,jdbcType=VARCHAR},
+	            </if>
+	             <if test="goodId!=null and goodId!=''">
+	                 goodId=#{goodId,jdbcType=VARCHAR},
+	            </if>
+	             <if test="storeNum!=null and storeNum!=''">
+	                 storeNum=#{storeNum,jdbcType=INTEGER},
+	            </if>
+	             <if test="goodValidDate!=null and goodValidDate!=''">
+	                 goodValidDate=#{goodValidDate,jdbcType=DATE},
+	            </if>
+	              <if test="goodXs!=null and goodXs!=''">
+	                 goodXs=#{goodXs,jdbcType=DOUBLE},
+	            </if>
+	           
+	           
+	      </set>
+	      where id=#{id,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<!-- 删除库存信息-->
+	<delete id="delete" parameterType="java.lang.String">
+	   delete from goodstore  where id=#{id,jdbcType=VARCHAR}
+	
+	</delete>
+	<!-- 查询一条记录 -->
+	<select id="selectByPk" parameterType="java.lang.String" resultMap="GoodStore">
+	    select a.*,b.goodName from goodstore a left join good b on a.goodId=b.id where a.id=#{id,jdbcType=VARCHAR}
+	</select>
+	<!-- 清空库存 -->
+	<insert id="cleanStore" parameterType="java.util.Map">
+	<!-- JDBC将将所有的字段都当做可以为空 -->
+	    insert into goodguoqi(id,goodId,goodNum,goodJprice,sumMoney,storePh,goodGuoQiDate)
+	    values(#{id,jdbcType=VARCHAR},#{goodId,jdbcType=VARCHAR},#{goodNum,jdbcType=INTEGER},#{goodJprice,jdbcType=DOUBLE},#{sumMoney,jdbcType=DOUBLE},#{storePh,jdbcType=VARCHAR},#{goodGuoQiDate,jdbcType=DATE})
+	</insert>
+	
+</mapper>
+
